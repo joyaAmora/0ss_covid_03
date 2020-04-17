@@ -46,7 +46,11 @@
 
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedInvoice.InvoiceId, Mode=OneWay}"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedInvoice.CreationDateTime, Mode=OneWay}"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedInvoice.Customer.Info, Mode=OneWay}"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                <TextBox  Text="{Binding SelectedInvoice.Customer.Info, Mode=OneWay}"/>
+                <Button Content="Voir" Command="{Binding DataContext.DisplayCustomerCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DockPanel}}"
+                                            CommandParameter="{Binding SelectedInvoice.Customer}"></Button>
+            </StackPanel>
             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedInvoice.SubTotal, StringFormat=C}"/>
             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedInvoice.FedTax, Mode=OneWay, StringFormat=C}"/>
             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedInvoice.ProvTax, Mode=OneWay, StringFormat=C}"/>
