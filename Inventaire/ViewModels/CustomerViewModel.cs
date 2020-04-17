@@ -1,6 +1,7 @@
 ﻿using BillingManagement.Business;
 using BillingManagement.Models;
 using BillingManagement.UI.ViewModels.Commands;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -34,12 +35,13 @@ namespace BillingManagement.UI.ViewModels
         }
 
 
-        public DeleteCustomerCommand DeleteCustomerCommand { get; set; }
+        public RelayCommand DeleteCustomerCommand { get; private set; }
 
 
         public CustomerViewModel()
         {
-            DeleteCustomerCommand = new DeleteCustomerCommand(DeleteCustomer);
+            DeleteCustomerCommand = new RelayCommand(DeleteCustomer, canDeleteCustomer);
+            //DeleteCustomerCommand = new DeleteCustomerCommand(DeleteCustomer);
             InitValues();
         }
 
@@ -49,15 +51,24 @@ namespace BillingManagement.UI.ViewModels
             Debug.WriteLine(Customers.Count);
         }
 
-        private void DeleteCustomer(Customer c)
+        private void DeleteCustomer(object c)
         {
-            var currentIndex = Customers.IndexOf(c);
+            Customer customer = c as Customer;
+            var currentIndex = Customers.IndexOf((Customer)customer);
 
             if (currentIndex > 0) currentIndex--;
 
             SelectedCustomer = Customers[currentIndex];
 
-            Customers.Remove(c);
+            Customers.Remove(customer);
+        }
+
+        private bool canDeleteCustomer(object c)
+        {
+            if (c == null) return false;
+            Customer customer = c as Customer;
+
+            return customer.Invoices.Count == 0;
         }
 
     }
