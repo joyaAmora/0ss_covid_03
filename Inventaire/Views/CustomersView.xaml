@@ -91,7 +91,9 @@
             </StackPanel>
 
             <StackPanel Grid.Row="6" Grid.ColumnSpan="2">
-                <Button Width="125" HorizontalAlignment="Left">Nouvelle Facture</Button>
+                <Button Content="Nouvelle Facture" Width="125" HorizontalAlignment="Left"
+                        Command="{Binding DataContext.NewInvoiceCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DockPanel}}"
+                                            CommandParameter="{Binding SelectedCustomer}"></Button>
                 <DataGrid ItemsSource="{Binding SelectedCustomer.Invoices}" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Factures" Binding="{Binding Info}"/>
