@@ -1,20 +1,20 @@
-﻿using BillingManagement.Models;
+﻿using BillingManagement.Business;
+using BillingManagement.Models;
 using BillingManagement.UI.ViewModels.Commands;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 
 namespace BillingManagement.UI.ViewModels
 {
-    class MainViewModel : BaseViewModel
+	class MainViewModel : BaseViewModel
     {
 		private BaseViewModel _vm;
 		BillingManagementContext db = new BillingManagementContext();
 		ObservableCollection<Customer> dbCustomers;
 		ObservableCollection<Invoice> dbInvoices;
+		readonly CustomersDataService customersDataService = new CustomersDataService();
 
 		public BaseViewModel VM
 		{
@@ -128,19 +128,25 @@ namespace BillingManagement.UI.ViewModels
 		private void SearchCustomer(object parameter)
 		{
 			string input = searchCriteria as string;
-			List<Customer> Customers = customerViewModel.Customers.ToList<Customer>();
+			IEnumerable<Customer> Customers = customerViewModel.Customers.ToList<Customer>();
+			IEnumerable<Customer> FoundCustomers = customerViewModel.Customers.ToList<Customer>();
 			Customer SelectedCustomer = customerViewModel.SelectedCustomer;
 
-			SelectedCustomer = Customers.Find(c => c.Name == input || c.LastName == input);
+			FoundCustomers = Customers.Where(c => c.Name.ToUpper().StartsWith(input.ToUpper()) || c.LastName.ToUpper().StartsWith(input.ToUpper()));
 
-			if(SelectedCustomer != null)
+
+			int list = FoundCustomers.Count();
+			if(list > 0)
 			{
-				customerViewModel.SelectedCustomer = SelectedCustomer;
+				customerViewModel.Customers = new ObservableCollection<Customer>(FoundCustomers);
+				customerViewModel.SelectedCustomer = FoundCustomers.First();
 			}
 			else
 			{
+				customerViewModel.Customers = new ObservableCollection<Customer> (customersDataService.GetAll().ToList());
 				customerViewModel.SelectedCustomer = Customers.First<Customer>();
-				MessageBox.Show("Aucun contact trouvé");
+				MessageBox.Show("Aucun contact trouvé, retour à la liste initiale");
+				
 			}
 		}
 

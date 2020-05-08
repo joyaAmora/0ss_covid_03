@@ -16,7 +16,7 @@ namespace BillingManagement.UI.ViewModels
         public ObservableCollection<Customer> Customers
         {
             get => customers;
-            private set
+            set
             {
                 customers = value;
                 OnPropertyChanged();
