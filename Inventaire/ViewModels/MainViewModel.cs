@@ -2,13 +2,19 @@
 using BillingManagement.UI.ViewModels.Commands;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace BillingManagement.UI.ViewModels
 {
     class MainViewModel : BaseViewModel
     {
 		private BaseViewModel _vm;
+		BillingManagementContext db = new BillingManagementContext();
+		ObservableCollection<Customer> dbCustomers;
+		ObservableCollection<Invoice> dbInvoices;
 
 		public BaseViewModel VM
 		{
@@ -42,7 +48,7 @@ namespace BillingManagement.UI.ViewModels
 		public DelegateCommand<Customer> DisplayCustomerCommand { get; private set; }
 
 		public DelegateCommand<Customer> AddInvoiceToCustomerCommand { get; private set; }
-
+		public RelayCommand<Customer> SearchCommand { get; set; }
 
 		public MainViewModel()
 		{
@@ -53,8 +59,17 @@ namespace BillingManagement.UI.ViewModels
 			AddNewItemCommand = new DelegateCommand<object>(AddNewItem, CanAddNewItem);
 			AddInvoiceToCustomerCommand = new DelegateCommand<Customer>(AddInvoiceToCustomer);
 
+			SearchCommand = new RelayCommand<Customer>(SearchCustomer, CanAddNewItem);
+
 			customerViewModel = new CustomerViewModel();
 			invoiceViewModel = new InvoiceViewModel(customerViewModel.Customers);
+
+			dbCustomers = new ObservableCollection<Customer>();
+			dbInvoices = new ObservableCollection<Invoice>();
+
+			var sort = dbCustomers.OrderBy(x => x.LastName);
+			var CustomersSorted = new ObservableCollection<Customer>(sort);
+			
 
 			VM = customerViewModel;
 
@@ -108,6 +123,25 @@ namespace BillingManagement.UI.ViewModels
 
 			result = VM == customerViewModel;
 			return result;
+		}
+
+		private void SearchCustomer(object parameter)
+		{
+			string input = searchCriteria as string;
+			List<Customer> Customers = customerViewModel.Customers.ToList<Customer>();
+			Customer SelectedCustomer = customerViewModel.SelectedCustomer;
+
+			SelectedCustomer = Customers.Find(c => c.Name == input || c.LastName == input);
+
+			if(SelectedCustomer != null)
+			{
+				customerViewModel.SelectedCustomer = SelectedCustomer;
+			}
+			else
+			{
+				customerViewModel.SelectedCustomer = Customers.First<Customer>();
+				MessageBox.Show("Aucun contact trouvé");
+			}
 		}
 
 	}

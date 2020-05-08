@@ -35,11 +35,10 @@ namespace BillingManagement.UI.ViewModels
 
         public RelayCommand<Customer> DeleteCustomerCommand { get; private set; }
 
-
         public CustomerViewModel()
         {
             DeleteCustomerCommand = new RelayCommand<Customer>(DeleteCustomer, CanDeleteCustomer);
-            
+
 
             InitValues();
         }
