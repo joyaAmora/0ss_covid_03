@@ -18,6 +18,8 @@ namespace BillingManagement.Models
         private ObservableCollection<ContactInfo> contactInfos = new ObservableCollection<ContactInfo>();
         private ObservableCollection<Invoice> invoices = new ObservableCollection<Invoice>();
 
+        public int CustomerID { get; set; }
+
         #region Property definitions
         public string Name
         {
