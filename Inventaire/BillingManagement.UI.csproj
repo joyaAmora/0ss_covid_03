@@ -48,4 +48,10 @@
     </Resource>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="BillingManagement.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
