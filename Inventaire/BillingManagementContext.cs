@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BillingManagement.UI
 {
-    class BillingManagementContext: DbContext
+    public class BillingManagementContext: DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

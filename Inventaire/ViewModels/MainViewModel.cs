@@ -93,11 +93,13 @@ namespace BillingManagement.UI.ViewModels
 
 			SearchCommand = new RelayCommand<Customer>(SearchCustomer, CanAddNewItem);
 
-			customerViewModel = new CustomerViewModel();
-			invoiceViewModel = new InvoiceViewModel(customerViewModel.Customers);
-
 			customers = new ObservableCollection<Customer>();
 			invoices = new ObservableCollection<Invoice>();
+
+			//GetDataDB(null);
+			customerViewModel = new CustomerViewModel(db, customers);
+			invoiceViewModel = new InvoiceViewModel(customerViewModel.Customers);
+
 			
 
 			VM = customerViewModel;
@@ -190,9 +192,9 @@ namespace BillingManagement.UI.ViewModels
 				}
 				else
 				{
-					customerViewModel.Customers = new ObservableCollection<Customer>(customersDataService.GetAll().ToList());
-					customerViewModel.SelectedCustomer = Customers.First<Customer>();
-					MessageBox.Show("Aucun contact trouvé, retour à la liste initiale");
+					MessageBox.Show("Aucun contact trouvé");
+					Customers = new ObservableCollection<Customer>(Customers.OrderBy(c => c.LastName));
+					customerViewModel.Customers = Customers;
 				}
 
 			}

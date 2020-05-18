@@ -3,6 +3,8 @@ using BillingManagement.Models;
 using BillingManagement.UI.ViewModels.Commands;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace BillingManagement.UI.ViewModels
 {
@@ -10,8 +12,9 @@ namespace BillingManagement.UI.ViewModels
     {
         readonly CustomersDataService customersDataService = new CustomersDataService();
 
-        private ObservableCollection<Customer> customers;
-        private Customer selectedCustomer;
+        private ObservableCollection<Customer> customers = new ObservableCollection<Customer>();
+        private Customer selectedCustomer = new Customer();
+        private BillingManagementContext dbCustomerVM;
 
         public ObservableCollection<Customer> Customers
         {
@@ -34,13 +37,18 @@ namespace BillingManagement.UI.ViewModels
         }
 
         public RelayCommand<Customer> DeleteCustomerCommand { get; private set; }
+        public RelayCommand<Customer> AddCustomerCommand { get; private set; }
 
-        public CustomerViewModel()
+        public CustomerViewModel(BillingManagementContext db, ObservableCollection<Customer> c)
         {
             DeleteCustomerCommand = new RelayCommand<Customer>(DeleteCustomer, CanDeleteCustomer);
+            AddCustomerCommand = new RelayCommand<Customer>(AddCustomer, CanAddCustomer);
 
-
+            dbCustomerVM = db;
+            customers = c;
             InitValues();
+            selectedCustomer = customers.First();
+            
         }
 
         private void InitValues()
@@ -60,12 +68,25 @@ namespace BillingManagement.UI.ViewModels
             Customers.Remove(c);
         }
 
+        private void AddCustomer(Customer c)
+        {
+            dbCustomerVM.Update(c);
+            dbCustomerVM.SaveChanges();
+            Customers = new ObservableCollection<Customer>(Customers.OrderBy(c => c.Info));
+        }
         private bool CanDeleteCustomer(Customer c)
         {
             if (c == null) return false;
 
             
             return c.Invoices.Count == 0;
+        }
+        private bool CanAddCustomer(Customer c)
+        {
+            if (c == null) return false;
+
+            
+            return true;
         }
 
 
